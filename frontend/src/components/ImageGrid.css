@@ -1,17 +1,18 @@
 .image-grid-container {
-  margin-top: 2rem;
+  width: 100%;
 }
 
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 0;
+  /* Larger minimum width for bigger, more impactful images */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem; 
+  padding-bottom: 4rem;
 }
 
 @media (max-width: 768px) {
   .image-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* Full width on mobile */
+    gap: 1.5rem;
   }
 }

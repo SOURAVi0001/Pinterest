@@ -8,48 +8,33 @@ const ImageCard = ({ image }) => {
     setImageError(true);
   };
 
-  const fallbackImage = 'https://via.placeholder.com/564x564/667eea/ffffff?text=Image+Not+Available';
+  const fallbackImage = 'https://via.placeholder.com/600x800/f0f0f0/999999?text=Unavailable';
 
   return (
     <div className="image-card">
       <div className="image-card-wrapper">
-        {!imageError ? (
-          <img
-            src={image.imageUrl || fallbackImage}
-            alt={image.title || 'Pinterest Image'}
-            className="image-card-img"
-            onError={handleImageError}
-            loading="lazy"
-          />
-        ) : (
-          <div className="image-error-placeholder">
-            <span>Image unavailable</span>
-          </div>
-        )}
+        <img
+          src={!imageError ? (image.imageUrl || fallbackImage) : fallbackImage}
+          alt={image.title || 'Visual Content'}
+          className="image-card-img"
+          onError={handleImageError}
+          loading="lazy"
+        />
         
-        <div className="image-card-overlay">
-          <div className="image-card-info">
-            <h3 className="image-card-title">{image.title || 'Untitled'}</h3>
-            {image.description && (
-              <p className="image-card-description">{image.description}</p>
-            )}
-            {image.board && (
-              <span className="image-card-board">📌 {image.board}</span>
-            )}
-          </div>
-        </div>
-      </div>
-      
-      {image.link && image.link !== '#' && (
-        <a
-          href={image.link}
-          target="_blank"
+        <a 
+          href={image.link && image.link !== '#' ? image.link : undefined}
+          target="_blank" 
           rel="noopener noreferrer"
-          className="image-card-link"
+          className="image-overlay-link"
         >
-          View on Pinterest →
+          <div className="image-card-overlay">
+            <div className="image-card-info">
+              <span className="image-category">{image.board || 'General'}</span>
+              <h3 className="image-card-title">{image.title || 'Untitled'}</h3>
+            </div>
+          </div>
         </a>
-      )}
+      </div>
     </div>
   );
 };
