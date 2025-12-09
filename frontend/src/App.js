@@ -9,7 +9,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 
 // Ensure this points to your deployed backend URL + /api
 // Example for Render: https://printpress-backend.onrender.com/api
+// For development: http://localhost:5000/api
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+console.log('API_URL:', API_URL);
 
 function App() {
   const [images, setImages] = useState([]);
@@ -25,13 +28,13 @@ function App() {
   const fetchImages = async (query, limit = 20) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // Connects to: GET /api/pinterest/search
       const response = await axios.get(`${API_URL}/pinterest/search`, {
         params: { query, limit },
       });
-      
+
       if (response.data.success) {
         setImages(response.data.images);
       } else {
@@ -40,7 +43,7 @@ function App() {
     } catch (err) {
       console.error('Error fetching images:', err);
       setError('Failed to fetch images. Backend might be sleeping or down.');
-      
+
       // Fallback: Show sample images if backend fails so the UI doesn't look broken
       setImages([
         {
@@ -84,7 +87,7 @@ function App() {
       <main className="app-main">
         <div className="container">
           <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
-          
+
           {error && (
             <div className="error-message">
               {error}
