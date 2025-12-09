@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import SearchBar from './components/SearchBar';
 import ImageGrid from './components/ImageGrid';
 import LoadingSpinner from './components/LoadingSpinner';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -65,7 +67,7 @@ function App() {
     fetchImages(query);
   };
 
-  return (
+  const HomePage = () => (
     <div className="App">
       <header className="app-header">
         <div className="container">
@@ -100,10 +102,24 @@ function App() {
 
       <footer className="app-footer">
         <div className="container">
-          <p>&copy; 2024 PrintPress - Powered by Pinterest API</p>
+          <div className="footer-content">
+            <p>&copy; 2024 PrintPress - Powered by Pinterest API</p>
+            <div className="footer-links">
+              <a href="/privacy-policy" className="footer-link">Privacy Policy</a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
+  );
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      </Routes>
+    </Router>
   );
 }
 
