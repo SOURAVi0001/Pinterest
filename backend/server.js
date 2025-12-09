@@ -10,9 +10,19 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// CORS Configuration
+const corsOptions = {
+  origin: FRONTEND_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+};
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB Connection
@@ -20,24 +30,24 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/printpres
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Pinterest API Routes
 app.get('/api/pinterest/search', async (req, res) => {
   try {
     const { query, limit = 20 } = req.query;
-    
+
     if (!query) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
 
     const accessToken = process.env.PINTEREST_ACCESS_TOKEN;
-    
+
     if (!accessToken || accessToken === 'your_pinterest_access_token_here') {
       throw new Error('Pinterest access token not configured');
     }
-    
+
     // NOTE: The /v5/search/pins endpoint searches the AUTHENTICATED USER'S pins.
     // Standard API v5 access does not allow searching the public Pinterest feed.
     const response = await axios.get(`https://api.pinterest.com/v5/search/pins`, {
@@ -53,7 +63,7 @@ app.get('/api/pinterest/search', async (req, res) => {
 
     // Pinterest API v5 returns data in 'items' array
     const pins = response.data?.items || [];
-    
+
     // Save to MongoDB
     const savedImages = await Promise.all(
       pins.map(async (pin) => {
@@ -62,15 +72,15 @@ app.get('/api/pinterest/search', async (req, res) => {
         if (existingImage) {
           return existingImage;
         }
-        
+
         // Corrected: v5 Standard Image Keys (1200x, 600x, 400x300)
         // Note: media.images might differ for video pins, checking defensively
         const images = pin.media?.images || pin.images || {}; // defensive check
-        const imageUrl = images['1200x']?.url || 
-                        images['600x']?.url || 
-                        images['400x300']?.url || 
-                        '';
-        
+        const imageUrl = images['1200x']?.url ||
+          images['600x']?.url ||
+          images['400x300']?.url ||
+          '';
+        // 
         if (!imageUrl) return null; // Skip if no valid image found
 
         const image = new PinterestImage({
@@ -82,7 +92,7 @@ app.get('/api/pinterest/search', async (req, res) => {
           board: pin.board_owner?.username || '', // v5 structure differs for board info
           createdAt: pin.created_at ? new Date(pin.created_at) : new Date(),
         });
-        
+
         return await image.save();
       })
     );
@@ -101,7 +111,7 @@ app.get('/api/pinterest/search', async (req, res) => {
   } catch (error) {
     // Log detailed API error
     console.error('Pinterest API Error:', error.response?.data || error.message);
-    
+
     // Fallback: Return sample data if API fails or Token is invalid
     // This ensures the UI still looks good for testing
     res.json({
@@ -141,6 +151,7 @@ app.get('/api/images', async (req, res) => {
 
 // Get image by ID
 app.get('/api/images/:id', async (req, res) => {
+  
   try {
     const image = await PinterestImage.findById(req.params.id);
     if (!image) {
@@ -150,6 +161,7 @@ app.get('/api/images/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
 });
 
 // Health check
