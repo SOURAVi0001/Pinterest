@@ -4,9 +4,9 @@
 
 .image-grid {
   display: grid;
-  /* Larger minimum width for bigger, more impactful images */
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem; 
+  /* Standard Pinterest column width is around 236px */
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: 1.5rem; 
   padding-bottom: 4rem;
 }
 

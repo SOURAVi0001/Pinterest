@@ -60,44 +60,46 @@ function App() {
     fetchImages(query);
   };
 
-  const HomePage = () => (
-    <div className="App">
-      <header className="app-header">
-        <div className="container header-content">
-          <h1 className="app-title">PrintPress</h1>
-          <p className="app-subtitle">Curated visual inspiration.</p>
-        </div>
-      </header>
-
-      <main className="app-main">
-        <div className="container">
-          <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
-          
-          {error && <div className="error-message">{error}</div>}
-
-          {loading ? <LoadingSpinner /> : <ImageGrid images={images} />}
-
-          {!loading && images.length === 0 && (
-            <div className="no-results">
-              <p>No results found.</p>
-            </div>
-          )}
-        </div>
-      </main>
-
-      <footer className="app-footer">
-        <div className="container">
-          <p>&copy; 2024 PrintPress</p>
-          <a href="/privacy-policy" className="footer-link">Privacy</a>
-        </div>
-      </footer>
-    </div>
-  );
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={
+          <div className="App">
+            <header className="app-header">
+              <div className="container header-content">
+                <h1 className="app-title">PrintPress</h1>
+                <p className="app-subtitle">Curated visual inspiration.</p>
+              </div>
+            </header>
+
+            <main className="app-main">
+              <div className="container">
+                <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
+                
+                {error && <div className="error-message">{error}</div>}
+
+                {loading ? <LoadingSpinner /> : <ImageGrid images={images} />}
+
+                {!loading && images.length === 0 && (
+                  <div className="no-results">
+                    <p>No results found.</p>
+                  </div>
+                )}
+              </div>
+            </main>
+
+            <footer className="app-footer">
+              <div className="container">
+                <div className="footer-content">
+                  <p>&copy; 2024 PrintPress - Powered by Pinterest API</p>
+                  <div className="footer-links">
+                    <a href="/privacy-policy" className="footer-link">Privacy Policy</a>
+                  </div>
+                </div>
+              </div>
+            </footer>
+          </div>
+        } />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </Router>
